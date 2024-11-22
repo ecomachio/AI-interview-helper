@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Bot, Sparkles } from "lucide-react"
+import { Bot, LandPlot, Sparkles } from "lucide-react"
 import { ChatInput } from "@/components/chat/chat-input"
 import { SuggestionCard } from "@/components/chat/suggestion-card"
 
@@ -24,36 +24,18 @@ export default function Home() {
     setShowSuggestions(false)
   }
 
-  const suggestions = [
-    {
-      question: "Understanding the fundamentals",
-      sliderLabel: "How familiar are you with this topic",
-    },
-    {
-      question: "Practical implementation",
-      sliderLabel: "Years of experience in this area",
-    },
-    {
-      question: "Advanced concepts",
-      sliderLabel: "Rate your expertise level",
-    },
-    {
-      question: "Real-world applications",
-      sliderLabel: "How often do you use this",
-    },
-  ]
-
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-secondary">
       <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="flex flex-col items-center justify-center space-y-8 text-center">
-          <div className="relative">
+
+          <div className={`relative transition-all duration-500 ${showSuggestions ? 'opacity-0 translate-y-[-1000px]' : 'opacity-100 translate-y-0'}`}>
             <div className="absolute -left-12 -top-12 h-24 w-24 animate-pulse rounded-full bg-primary/10" />
             <div className="absolute -right-16 -bottom-12 h-32 w-32 animate-pulse rounded-full bg-primary/5 delay-150" />
-            <Bot className="h-16 w-16 text-primary" />
+            <LandPlot className="h-20 w-20 text-primary" />
           </div>
 
-          <div className="relative z-10 max-w-3xl space-y-4">
+          <div className={`relative z-10 max-w-3xl space-y-4 transition-all duration-500 ${showSuggestions ? 'opacity-0 translate-y-[-1000px]' : 'opacity-100 translate-y-0'}`}>
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
               Seu copiloto na {" "}
               <span className="bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
@@ -65,12 +47,11 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="w-full max-w-xl space-y-4">
-            <ChatInput onSubmit={handleMessage} />
+          <div className={`w-full max-w-xl space-y-4 transition-all duration-500 ${showSuggestions ? 'translate-y-[-400px]' : 'translate-y-0'}`}>
+            <ChatInput setShowSuggestions={setShowSuggestions} />
 
             {showSuggestions && (
               <SuggestionCard
-                suggestions={suggestions}
                 onSelect={handleSuggestionSelect}
                 onSkip={handleSkip}
               />
