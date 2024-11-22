@@ -27,9 +27,9 @@ export function ChatInput({ onSubmit }: ChatInputProps) {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         className="h-12 rounded-full border-2 bg-background/80 px-6 backdrop-blur-sm focus-visible:ring-primary"
-        placeholder="Ask me anything..."
+        placeholder="Cole os requisitos da vaga aqui"
       />
-      <Button type="submit" size="icon" className="h-12 w-12 rounded-full">
+      <Button type="submit" size="icon" className="h-12 w-16 rounded-full">
         <Send className="h-5 w-5" />
       </Button>
     </form>

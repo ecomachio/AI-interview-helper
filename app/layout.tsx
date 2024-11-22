@@ -6,8 +6,8 @@ import { Header } from '@/components/layout/header'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AI Assistant - Your Smart Chatbot',
-  description: 'Experience the power of AI conversation with our advanced chatbot.',
+  title: 'ZeVaga - Seu copiloto na maratona das entrevistas',
+  description: 'Manda os requisitos da vaga e veja a mágica acontecer: estudo sob medida pra você!',
 }
 
 export default function RootLayout({

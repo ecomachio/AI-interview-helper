@@ -17,7 +17,7 @@ export default function Home() {
 
   const handleSuggestionSelect = (suggestion: string, value: number) => {
     console.log("Selected suggestion:", suggestion, "with value:", value)
-    router.push("/study-plan")
+    router.push("/dashboard")
   }
 
   const handleSkip = () => {
@@ -55,19 +55,19 @@ export default function Home() {
 
           <div className="relative z-10 max-w-3xl space-y-4">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-              Your AI Assistant for{" "}
+              Seu copiloto na {" "}
               <span className="bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
-                Everything
+                entrevistas
               </span>
             </h1>
             <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-              Experience the power of AI conversation. Ask questions, get insights, and explore new ideas with our advanced chatbot.
+              Manda os requisitos da vaga e veja a mágica acontecer: estudo sob medida pra você!
             </p>
           </div>
 
           <div className="w-full max-w-xl space-y-4">
             <ChatInput onSubmit={handleMessage} />
-            
+
             {showSuggestions && (
               <SuggestionCard
                 suggestions={suggestions}
