@@ -80,3 +80,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.scroll-hidden::-webkit-scrollbar {
+  opacity: 0;
+}

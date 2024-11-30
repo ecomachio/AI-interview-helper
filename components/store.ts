@@ -17,6 +17,8 @@ interface GlobalState {
   setError: (error: string | null) => void
   reset: () => void
   setTechnologiesList: (technologies: Technology[]) => void
+  shouldChatInputExpand: boolean
+  setShouldChatInputExpand: (shouldExpand: boolean) => void
 }
 
 export const useStore = create<GlobalState>()(
@@ -26,7 +28,7 @@ export const useStore = create<GlobalState>()(
       isLoading: false,
       error: null,
       technologiesList: [],
-
+      shouldChatInputExpand: true,
       // Actions
       setTechnologiesList: (technologies: Technology[]) => set({ technologiesList: technologies }),
       setIsLoading: (loading) => set({ isLoading: loading }),
@@ -35,6 +37,7 @@ export const useStore = create<GlobalState>()(
         isLoading: false,
         error: null
       }),
+      setShouldChatInputExpand: (shouldExpand) => set({ shouldChatInputExpand: shouldExpand }),
     }),
   )
 )

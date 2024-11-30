@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { ChevronRight, SkipForward } from "lucide-react"
-import { useState } from "react"
-import { useGloblaStore } from "../store"
+import { Technology, useGloblaStore } from "../store"
+import { useRouter } from "next/navigation"
 
 const FAMILIARITY_LABELS = [
   "Não conheço nada",
@@ -22,14 +22,10 @@ const FAMILIARITY_LABELS = [
 
 type Familiarity = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
-interface SuggestionCardProps {
-  onSelect: (suggestion: string, value: number) => void
-  onSkip: () => void
-}
-
-export function SuggestionCard({ onSelect, onSkip }: SuggestionCardProps) {
+export function SuggestionCard() {
   const technologiesList = useGloblaStore.use.technologiesList();
   const setTechnologiesList = useGloblaStore.use.setTechnologiesList();
+  const router = useRouter()
 
   const handleSliderChange = (index: number, value: number[]) => {
     const newOptions = [...technologiesList]
@@ -38,6 +34,19 @@ export function SuggestionCard({ onSelect, onSkip }: SuggestionCardProps) {
 
     newOptions[index].familiarity = value[0] as Familiarity
     setTechnologiesList(newOptions)
+  }
+
+  const handleConfirm = () => {
+    // call api to save technologies list
+    console.log(technologiesList)
+    fetch('/api/technologies', {
+      method: 'POST',
+      body: JSON.stringify({ technologiesList })
+    })
+      .then(res => res.json() as Promise<{ response: Technology[] }>)
+      .then(res => {
+        router.push('/dashboard')
+      })
   }
 
   return (
@@ -80,14 +89,22 @@ export function SuggestionCard({ onSelect, onSkip }: SuggestionCardProps) {
             </div>
           ))}
         </div>
-        <Button
-          variant="ghost"
-          className="mt-6 w-full text-muted-foreground"
-          onClick={onSkip}
-        >
-          <SkipForward className="mr-2 h-4 w-4" />
-          Skip suggestions
-        </Button>
+        <div className="flex justify-between mt-12">
+          <Button
+            variant="ghost"
+            className="w-full text-muted-foreground"
+            onClick={handleConfirm}
+          >
+            <SkipForward className="mr-2 h-4 w-4" />
+            Pular essa parte
+          </Button>
+          <Button
+            className="ml-2 w-full"
+            onClick={handleConfirm}
+          >
+            Confirmar
+          </Button>
+        </div>
       </div>
     </Card>
   )

@@ -12,6 +12,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogIn, LogOut, UserPlus, User } from "lucide-react"
 import { AuthDialog } from "@/components/auth/auth-dialog"
+import { useRouter } from "next/navigation"
 
 interface AuthButtonProps {
   isAuthenticated?: boolean
@@ -19,17 +20,19 @@ interface AuthButtonProps {
   userInitials?: string
 }
 
-export function AuthButton({ 
-  isAuthenticated = false, 
-  userImage = "", 
+export function AuthButton({
+  isAuthenticated = false,
+  userImage = "",
   userInitials = "U"
 }: AuthButtonProps) {
   const [showAuthDialog, setShowAuthDialog] = useState(false)
   const [authType, setAuthType] = useState<"login" | "signup">("login")
+  const router = useRouter()
 
   const handleAuthClick = (type: "login" | "signup") => {
-    setAuthType(type)
-    setShowAuthDialog(true)
+    // setAuthType(type)
+    // setShowAuthDialog(true)
+    router.push(`/${type}`)
   }
 
   if (!isAuthenticated) {
@@ -45,7 +48,7 @@ export function AuthButton({
             Sign up
           </Button>
         </div>
-        <AuthDialog 
+        <AuthDialog
           isOpen={showAuthDialog}
           onClose={() => setShowAuthDialog(false)}
           defaultTab={authType}

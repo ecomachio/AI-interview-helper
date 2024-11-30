@@ -1,55 +1,10 @@
-export const dynamic = 'force-dynamic';
-
+import { Technology } from "@/components/store";
+import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from 'ai'
-import { createOpenAI } from '@ai-sdk/openai'
-import { NextResponse } from 'next/server';
-import { Technology } from '@/components/store';
-
-function parseTechnologies(rawTechnologies: string): Technology[] {
-  const lines = rawTechnologies.split('\n');
-  const technologies: Technology[] = [];
-  let currentTech: Partial<Technology> = {};
-
-  for (const line of lines) {
-    if (!line) continue; // Skip empty lines
-
-    if (line.startsWith('name:')) {
-      if (currentTech.name) { // Save previous tech if exists
-        technologies.push(currentTech as Technology);
-        currentTech = {};
-      }
-      currentTech.name = line.replace('name:', '').trim();
-    } else if (line.startsWith('description:')) {
-      currentTech.description = line.replace('description:', '').trim();
-    }
-
-    currentTech.familiarity = 5;
-  }
-
-  // Push the last technology
-  if (currentTech.name) {
-    technologies.push(currentTech as Technology);
-  }
-
-  return technologies;
-}
-
-// const PROMPT = `
-// can you please create a study plan based on the following job requirements? make sure to include all the technologies and concepts asked from the candidate. return a list of items with the study plan. return just a list of items in markdown format, no other text. at the end of the response add a simple list of technologies named "Technologies" exactly no matter the language.
-// `
+import { NextResponse } from "next/server";
 
 const PROMPT = `
-Extract a list of technologies from the following job requirements. Return the technologies in raw text format, with each entry consisting of a name and a short description. The description should be a concise 1 to 10-word explanation of the technology's purpose. Do not include any text other than the list. Ensure the format is exactly as follows:
-name: [Technology Name]
-description: [Brief description of the technology]
-
-Example:
-name: Java
-description: Java is a programming language and platform for application development.
-name: AWS
-description: AWS is a cloud computing platform for building, deploying, and scaling applications.
-
-each entry should be on a new line.
+Create a study plan based on the following technologies. Make sure to include all the technologies and concepts asked from the candidate. Return a list of items with the study plan. Return just a list of items in markdown format, no other text. At the end of the response add a simple list of technologies named "Technologies" exactly no matter the language.
 `
 
 const groq = createOpenAI({
@@ -57,25 +12,86 @@ const groq = createOpenAI({
   baseURL: 'https://api.groq.com/openai/v1'
 })
 
-export async function POST(req: Request) {
-  // Extract the `messages` from the body of the request
-  const { input } = await req.json();
+function generateLearningRoadmapPrompt(technologies: Technology[]): string {
+  return `
+You are an expert technical learning path architect specializing in creating precise, sequential learning roadmaps.
 
+Objective: Generate a comprehensive, step-by-step learning roadmap for each technology that provides a clear progression path.
+
+Input Technologies:
+${technologies.map(tech => `- ${tech.name}: Current Level ${tech.familiarity}/10`).join('\n')}
+
+Roadmap Creation Guidelines:
+1. Structure Principles:
+   - Create a sequential learning path with logical progression
+   - Number steps from 0 (absolute beginner) to advanced mastery
+   - Adapt complexity based on current familiarity level
+   - Ensure each step builds upon previous knowledge
+
+2. Roadmap Composition:
+   - 0-2 Level: Comprehensive foundational learning
+   - 3-5 Level: Bridging fundamental and intermediate concepts
+   - 6-8 Level: Advanced techniques and deep dives
+   - 9-10 Level: Cutting-edge and expert-level skills
+
+3. For Each Step, Include:
+   - Clear, actionable title
+   - Learning type (prerequisite, foundational, advanced, mastery)
+   - Estimated time to complete
+   - Key concepts to master
+   - Recommended learning resources
+   - Practical project suggestions
+   - Skills to be acquired
+
+4. Progression Criteria:
+   - Clearly define entry and exit requirements for each step
+   - Provide metrics to assess readiness to move to next stage
+   - Suggest self-assessment techniques
+
+5. Additional Considerations:
+   - Highlight potential career applications
+   - Recommend community resources and networking opportunities
+   - Suggest real-world project ideas for practical application
+
+Output Requirements:
+- Structured, JSON-parseable format
+- Comprehensive yet concise description
+- Technology-specific learning paths
+- Clear progression indicators
+
+Focus on creating a roadmap that is:
+- Logical and sequential
+- Adaptable to individual learning pace
+- Comprehensive yet not overwhelming
+- Practical and goal-oriented
+
+Provide a detailed, step-by-step learning roadmap that transforms current skill levels into comprehensive technical expertise.
+`;
+}
+
+const createStudyPlanByTechnology = async (technologiesList: Technology[]) => {
   // Get a language model
   const model = groq('llama-3.1-70b-versatile')
 
   // Call the language model with the prompt
   const result = await generateText({
     model,
-    prompt: `${PROMPT} ${input}`,
+    prompt: generateLearningRoadmapPrompt(technologiesList),
     maxTokens: 1000,
     temperature: 0.5,
     topP: 1,
     frequencyPenalty: 1,
   })
 
-  const technologies = parseTechnologies(result.text);
+  console.log(result.text)
 
-  // Respond with a streaming response
-  return NextResponse.json({ response: technologies })
+  return result.text
 }
+
+export async function POST(req: Request) {
+  const { technologiesList } = await req.json();
+  const studyPlan = await createStudyPlanByTechnology(technologiesList)
+  console.log(studyPlan)
+  return NextResponse.json({ response: studyPlan })
+}
+

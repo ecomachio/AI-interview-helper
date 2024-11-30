@@ -5,7 +5,7 @@ import { BarChart, BookOpen, Calendar, CheckCircle, Code, Database, Layout, Netw
 import { Progress } from "@/components/ui/progress"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-
+import { useGloblaStore } from "@/components/store"
 const topics = [
   { name: "Data Structures", icon: Database, progress: 75 },
   { name: "Algorithms", icon: Code, progress: 60 },
@@ -27,10 +27,12 @@ const schedule = [
 export default function Dashboard() {
   const [overallProgress, setOverallProgress] = useState(46)
 
+  const technologiesList = useGloblaStore.use.technologiesList();
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-8">Tech Interview Study Dashboard</h1>
-      
+
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
